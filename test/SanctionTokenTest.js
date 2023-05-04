@@ -46,4 +46,18 @@ describe('SanctionsToken contract', () => {
         expect(isBanned).to.be.false;
     });
 
+    it('should transfer tokens from an approved address correctly', async () => {
+        const amount = 100;
+        const sender = '0x1234567890123456789012345678901234567890';
+        await myToken.connect(wallet).transfer(sender, amount);
+        await myToken.connect(ethers.provider.getSigner(sender)).approve(wallet.address, amount);
+        await myToken.connect(wallet).transferFrom(sender, recipient.address, amount);
+        const expectedSenderBalance = 900;
+        const expectedRecipientBalance = 100;
+        const senderBalance = await myToken.balanceOf(sender);
+        const recipientBalance = await myToken.balanceOf(recipient.address);
+        expect(senderBalance).to.equal(expectedSenderBalance, 'Sender balance should be 900 tokens');
+        expect(recipientBalance).to.equal(expectedRecipientBalance, 'Recipient balance should be 100 tokens');
+    });
+
 });
