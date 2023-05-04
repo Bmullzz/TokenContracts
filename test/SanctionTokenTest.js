@@ -20,4 +20,15 @@ describe('SanctionsToken contract', () => {
         expect(balance).to.equal(expectedBalance, 'Initial balance should be 1000 tokens');
     });
 
+    it('should transfer tokens correctly', async () => {
+        const amount = 100;
+        await myToken.connect(wallet).transfer(recipient.address, amount);
+        const expectedSenderBalance = 900;
+        const expectedRecipientBalance = 100;
+        const senderBalance = await myToken.balanceOf(wallet.address);
+        const recipientBalance = await myToken.balanceOf(recipient.address);
+        expect(senderBalance).to.equal(expectedSenderBalance, 'Sender balance should be 900 tokens');
+        expect(recipientBalance).to.equal(expectedRecipientBalance, 'Recipient balance should be 100 tokens');
+      });
+
 });
