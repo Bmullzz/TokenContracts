@@ -29,6 +29,21 @@ describe('SanctionsToken contract', () => {
         const recipientBalance = await myToken.balanceOf(recipient.address);
         expect(senderBalance).to.equal(expectedSenderBalance, 'Sender balance should be 900 tokens');
         expect(recipientBalance).to.equal(expectedRecipientBalance, 'Recipient balance should be 100 tokens');
-      });
+    });
+
+    it('should ban an address correctly', async () => {
+        const bannedAddress = '0x1234567890123456789012345678901234567890';
+        await myToken.connect(wallet).banAddress(bannedAddress);
+        const isBanned = await myToken.isBanned(bannedAddress);
+        expect(isBanned).to.be.true;
+    }); 
+    
+    it('should unban an address correctly', async () => {
+        const bannedAddress = '0x1234567890123456789012345678901234567890';
+        await myToken.connect(wallet).banAddress(bannedAddress);
+        await myToken.connect(wallet).unbanAddress(bannedAddress);
+        const isBanned = await myToken.isBanned(bannedAddress);
+        expect(isBanned).to.be.false;
+    });
 
 });
