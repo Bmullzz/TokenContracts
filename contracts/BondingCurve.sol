@@ -42,12 +42,12 @@ contract BondingCurve {
         emit Sold(msg.sender, amount, gain);
     }
 
-    function getCost() {
-
+    function getCost(uint256 amount) public view returns (uint256) {
+        return reserve + (rate * amount / scale);
     }
 
-    function getGain() {
-
+    function getGain(uint256 amount) {
+        return reserve - (rate * amount / scale);
     }
 
     function onTransferRecieved() {
