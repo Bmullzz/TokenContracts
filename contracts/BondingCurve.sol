@@ -6,10 +6,10 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 // import "@openzeppelin/contracts/token/ERC1363/IERC1363Receiver.sol";
-import "erc-payable-token/contracts/token/ERC1363/ERC1363.sol";
+import "erc-payable-token/contracts/token/ERC1363/IERC1363Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BondingCurve is ERC1363, Ownable {
+contract BondingCurve is IERC1363Receiver, Ownable {
 
     ERC20 public token;
     uint256 public reserve;
@@ -19,7 +19,7 @@ contract BondingCurve is ERC1363, Ownable {
     event Bought(address indexed buyer, uint256 amount, uint256 cost);
     event Sold(address indexed seller, uint256 amount, uint256 gain);
 
-    constructor(address _token, uint256 _reserve, uint256 _rate, uint256 _scale) ERC1363 {
+    constructor(address _token, uint256 _reserve, uint256 _rate, uint256 _scale) {
         token = ERC20(_token);
         reserve = _reserve;
         rate = _rate;
