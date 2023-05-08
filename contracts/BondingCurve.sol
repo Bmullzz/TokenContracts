@@ -15,6 +15,9 @@ contract BondingCurve {
     uint256 public rate;
     uint256 public scale;
 
+    event Bought(address indexed buyer, uint256 amount, uint256 cost);
+    event Sold(address indexed seller, uint256 amount, uint256 gain);
+
     constructor(address _token, uint256 _reserve, uint256 _rate, uint256 _scale) {
         token = ERC20(_token);
         reserve = _reserve;
@@ -30,8 +33,13 @@ contract BondingCurve {
         emit Bought(msg.sender, amount, cost);
     }
 
-    function sell() {
-        
+    function sell(uint256 amount) public {
+        uint256 gain = getGain(amount);
+        require(token.balanceOf(address(this)) >= gain, "Insufficient Funds");
+        require(token.transferFrom(address(this), msg.sender, gain), "Transfer Failed");
+        require(token.transferFrom(msg.sender, address(this), amount), "Transfer Failed");
+        reserve -= gain;
+        emit Sold(msg.sender, amount, gain);
     }
 
     function getCost() {
