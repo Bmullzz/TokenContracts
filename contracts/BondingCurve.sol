@@ -50,19 +50,20 @@ contract BondingCurve {
         return reserve - (rate * amount / scale);
     }
 
-    function onTransferRecieved() {
-
+    function onTransferRecieved(address operator, address from, uint256 amount, bytes calldata data) public override returns (bytes) {
+        buy(amount);
+        return this.onTransferReceived.selector;
     }
 
-    function setRate() {
-
+    function setRate(uint256 _rate) public onlyOwner {
+        rate = _rate;
     }
 
-    function setScale() {
-
+    function setScale(uint256 _scale) public onlyOwner {
+        scale = _scale;
     }
 
-    function withdraw() {
-
+    function withdraw() public onlyOwner {
+        token.transfer(owner(), token.balanceOf(address(this)));
     }
 }
