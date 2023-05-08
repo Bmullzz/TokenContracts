@@ -5,10 +5,11 @@ pragma solidity ^0.8.0;
 ///@author Brian Mullin
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC1363/IERC1363Receiver.sol";
+// import "@openzeppelin/contracts/token/ERC1363/IERC1363Receiver.sol";
+import "erc-payable-token/contracts/token/ERC1363/ERC1363.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BondingCurve {
+contract BondingCurve is ERC1363, Ownable {
 
     ERC20 public token;
     uint256 public reserve;
@@ -18,7 +19,7 @@ contract BondingCurve {
     event Bought(address indexed buyer, uint256 amount, uint256 cost);
     event Sold(address indexed seller, uint256 amount, uint256 gain);
 
-    constructor(address _token, uint256 _reserve, uint256 _rate, uint256 _scale) {
+    constructor(address _token, uint256 _reserve, uint256 _rate, uint256 _scale) ERC1363 {
         token = ERC20(_token);
         reserve = _reserve;
         rate = _rate;
@@ -46,11 +47,11 @@ contract BondingCurve {
         return reserve + (rate * amount / scale);
     }
 
-    function getGain(uint256 amount) {
+    function getGain(uint256 amount) public view returns (uint256) {
         return reserve - (rate * amount / scale);
     }
 
-    function onTransferRecieved(address operator, address from, uint256 amount, bytes calldata data) public override returns (bytes) {
+    function onTransferReceived(address operator, address from, uint256 amount, bytes calldata data) public override returns (bytes4) {
         buy(amount);
         return this.onTransferReceived.selector;
     }
@@ -66,5 +67,5 @@ contract BondingCurve {
     function withdraw() public onlyOwner {
         token.transfer(owner(), token.balanceOf(address(this)));
     }
-    
+
 }
