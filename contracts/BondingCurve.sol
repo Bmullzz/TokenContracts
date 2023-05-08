@@ -66,4 +66,5 @@ contract BondingCurve {
     function withdraw() public onlyOwner {
         token.transfer(owner(), token.balanceOf(address(this)));
     }
+    
 }
