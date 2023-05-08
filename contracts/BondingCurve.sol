@@ -22,12 +22,16 @@ contract BondingCurve {
         scale = _scale;
     }
 
-    function buy() {
-
+    function buy(uint256 amount) public {
+        uint256 cost = getCost(amount);
+        require(token.balanceOf(msg.sender) >= cost, "Insufficient Funds");
+        require(token.transferFrom(msg.sender, address(this), cost), "Transfer Failed");
+        reserve += cost;
+        emit Bought(msg.sender, amount, cost);
     }
 
     function sell() {
-
+        
     }
 
     function getCost() {
@@ -51,6 +55,6 @@ contract BondingCurve {
     }
 
     function withdraw() {
-        
+
     }
 }
